@@ -13,6 +13,10 @@ class Player {
   position = new Vector2(0, 0);
   collisionRadius = 14;
   thruster = null;
+  inmunneTime = 0;
+  inmunne = false;
+  inmunneDuration = 3000;
+  contactPush = 0.5;
 
   constructor(gameInstance, x, y, rotation, playerIndex = 1) {
     this.playerIndex = playerIndex;
@@ -21,12 +25,25 @@ class Player {
     this.rotation = rotation;
     this.createPlayerImage();
     this.gameInstance = gameInstance;
+    this.inmunne = true;
+    this.engineSound = new AudioPlayer(
+      this.gameInstance,
+      "./Assets/Sounds/thruster.wav",
+      0.0,
+      true
+    );
+    new AudioPlayer(
+      gameInstance,
+      "./Assets/Sounds/playerAppear.wav",
+      0.1,
+      false
+    );
   }
 
   createPlayerImage() {
     const image = document.createElement("img");
     image.src =
-      this.playerIndex === 1
+      this.playerIndex === 0
         ? "./Assets/Images/ship-p1.png"
         : "./Assets/Images/ship-p2.png";
     this.sprite = image;
@@ -35,6 +52,10 @@ class Player {
     image.style.top = this.y + "px";
     image.style.zIndex = 100;
     image.style.scale = 1;
+    image.style.filter = "none";
+    image.style.opacity = 0.7;
+    image.style.outline = "none";
+    image.style.borderRadius = "50%";
     this.createCannon();
     document.body.appendChild(image);
 
@@ -45,17 +66,19 @@ class Player {
   }
 
   getCannonPosition() {
-    const cannonPos = this.position.add(
-      new Vector2(0, this.sprite.height).rotate(this.rotation)
+    const cannonPos = new Vector2(this.position.x, this.position.y).add(
+      new Vector2(0, -this.sprite.height / 2).rotate(this.rotation)
     );
+    return cannonPos;
   }
+
   createCannon() {
-    this.cannon = document.createElement("img");
-    this.cannon.src = "./Assets/Images/ParticleClear.png";
-    this.cannon.style.position = "relative";
-    this.cannon.style.left = this.sprite.width + "px";
-    this.cannon.style.top = "0px";
-    this.sprite.appendChild(this.cannon);
+    // this.cannon = document.createElement("img");
+    // this.cannon.src = "./Assets/Images/ParticleClear.png";
+    // this.cannon.style.position = "relative";
+    // this.cannon.style.left = this.sprite.width + "px";
+    // this.cannon.style.top = "0px";
+    // this.sprite.appendChild(this.cannon);
   }
 
   rotate(value) {
@@ -83,6 +106,10 @@ class Player {
     }
     if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].up]) {
       this.acceleration = this.THRUST;
+      this.engineSound.setVolume(0.1);
+    } else {
+      this.acceleration = 0;
+      this.engineSound.setVolume(0.0);
     }
     if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].fire]) {
       this.fire();
@@ -92,49 +119,91 @@ class Player {
   }
 
   fire() {
+    if (this.gameInstance.coinHunting) return;
     if (this.timeSinceLastShot < this.CANNON_COOLDOWN) return;
     this.timeSinceLastShot = 0;
+    const cannonPos = this.getCannonPosition();
     const bullet = new Bullet(
       this.gameInstance,
-      this.position.x,
-      this.position.y,
+      cannonPos.x,
+      cannonPos.y,
       this.rotation,
       this.playerIndex
       // this.velVector
     );
     this.gameInstance.gameObjects.push(bullet);
+    new AudioPlayer(this.gameInstance, "./Assets/Sounds/shot.wav", 0.3, false);
+  }
+
+  makeInmunne() {
+    this.inmunne = true;
+    this.inmunneTime = 0;
+    this.sprite.style.filter = "blur(2px)";
+    this.sprite.style.opacity = 0.7;
+    this.sprite.style.outline = "2px solid white";
   }
 
   destroy() {
-    new Explosion(this.gameInstance, this.position.x, this.position.y);
     this.thruster.destroy();
+    this.engineSound.destroy();
+    this.sprite?.parentElement?.removeChild(this.sprite);
     this.gameInstance.removeGameObject(this);
-    document.body.removeChild(this.sprite);
   }
 
   checkCollisions() {
     this.gameInstance.gameObjects.forEach((object) => {
-      if (object.type === "asteroid") {
+      if (object.type === "asteroid" && !this.inmunne) {
         if (
           this.position.distanceTo(object.position) <
           this.collisionRadius + object.collisionRadius
         ) {
           this.destroy();
-          setTimeout(() => {
-            if (this.playerIndex === 1) {
-              this.gameInstance.createPlayer1();
-            } else {
-              this.gameInstance.createPlayer2();
-            }
-          }, 2000);
+          this.gameInstance.playerDestroyed(this.playerIndex, this.position);
+          new Explosion(this.gameInstance, this.position.x, this.position.y);
+        }
+      }
+      if (object.type === "coin") {
+        if (
+          this.position.distanceTo(object.position) <
+          this.collisionRadius + object.collisionRadius
+        ) {
+          object.destroy(this.playerIndex);
+          this.gameInstance.coinCollected(this.playerIndex, object.points);
+          new AudioPlayer(this, "./Assets/Sounds/coin.wav", 0.5, false);
+        }
+      }
+      if (object.type === "player" && object.playerIndex !== this.playerIndex) {
+        if (
+          this.position.distanceTo(object.position) <
+          this.collisionRadius + object.collisionRadius
+        ) {
+          object.velVector.add(
+            new Vector2(
+              object.position.x - this.position.x,
+              object.position.y - this.position.y
+            )
+              .normalize()
+              .multiply(this.contactPush)
+          );
         }
       }
     });
   }
 
+  deactivateInmunne() {
+    this.inmunne = false;
+    this.sprite.style.filter = "none";
+    this.sprite.style.opacity = 1;
+    this.sprite.style.outline = "none";
+  }
+
   update(deltaTime) {
-    this.timeSinceLastShot += deltaTime;
+    if (this.inmunne) {
+      this.inmunneTime += deltaTime;
+      if (this.inmunneTime > this.inmunneDuration) this.deactivateInmunne();
+    }
     this.checkCollisions();
+    this.timeSinceLastShot += deltaTime;
     this.acceleration = 0;
     this.getInputs();
     this.speed += this.acceleration;

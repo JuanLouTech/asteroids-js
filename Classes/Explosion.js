@@ -22,8 +22,14 @@ class Explosion extends AnimatedSprite {
     this.gameInstance = gameInstance;
     this.gameInstance.addGameObject(this);
     super.play();
+    new AudioPlayer(
+      this.gameInstance,
+      "./Assets/Sounds/explosion.wav",
+      0.5,
+      false
+    );
     this.sprite.style.scale = 4;
-    this.sprite.style.zIndex = 110;
+    this.sprite.style.zIndex = 210;
   }
 
   destroy() {

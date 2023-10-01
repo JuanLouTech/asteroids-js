@@ -1,12 +1,13 @@
 const CONTROLS = {
-  1: {
+  pause: "Escape",
+  0: {
     up: "w",
     down: "s",
     left: "a",
     right: "d",
     fire: " ",
   },
-  2: {
+  1: {
     up: "ArrowUp",
     down: "ArrowDown",
     left: "ArrowLeft",

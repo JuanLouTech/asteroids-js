@@ -16,3 +16,22 @@ const limitMovement = (positionVector) => {
   positionVector.y = y;
   return positionVector;
 };
+
+// FINISH THIS PART (THIS IS FOR MAKING THE OBJECTS APPEAR ON THE OTHER SIDE OF THE SCREEN WHILE EXITING THE SCREEN)
+const limitMovementWithDuplicate = (positionVector, objectRadius) => {
+  let duplicatePosition = new Vector2(positionVector.x, positionVector.y);
+  if (positionVector.x < -objectRadius) {
+    positionVector.x = window.innerWidth + objectRadius;
+  }
+  if (positionVector.x > window.innerWidth + objectRadius) {
+    positionVector.x = -objectRadius;
+  }
+  if (positionVector.y < -objectRadius) {
+    positionVector.y = window.innerHeight + objectRadius;
+  }
+  if (positionVector.y > window.innerHeight + objectRadius) {
+    positionVector.y = -objectRadius;
+  }
+
+  return { position: positionVector, duplicatePosition: duplicatePosition };
+};

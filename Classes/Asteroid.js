@@ -1,5 +1,5 @@
 class Asteroid {
-  MAX_SPEED = 2;
+  MAX_SPEED = 3;
   MIN_SPEED = 0.8;
   rotationSpeed = 0.02;
   speed = 0;
@@ -11,6 +11,7 @@ class Asteroid {
   collisionRadius = 0;
   type = "asteroid";
   gameInstance = null;
+  scale = 1.5;
 
   // SIZE MUST BE "L", "M" or "S"
   constructor(gameInstance, x, y, size) {
@@ -32,16 +33,16 @@ class Asteroid {
   assignPointsWithSize(size) {
     switch (size) {
       case "L":
-        this.collisionRadius = 30 * this.gameInstance.scale;
+        this.collisionRadius = 30 * this.scale;
         this.points = 20;
         break;
       case "M":
-        this.collisionRadius = 14 * this.gameInstance.scale;
+        this.collisionRadius = 14 * this.scale;
         this.points = 50;
         break;
       case "S":
         this.points = 100;
-        this.collisionRadius = 4 * this.gameInstance.scale;
+        this.collisionRadius = 8 * this.scale;
         break;
       default:
         this.points = 0;
@@ -56,7 +57,7 @@ class Asteroid {
       case "M":
         return "./Assets/Images/AsteroidM.png";
       case "S":
-        return "./Assets/Images/AsteroidS.png";
+        return "./Assets/Images/AsteroidM.png";
       default:
         return "./Assets/Images/AsteroidL.png";
     }
@@ -75,7 +76,7 @@ class Asteroid {
     image.style.left = this.x + "px";
     image.style.top = this.y + "px";
     image.style.zIndex = 95;
-    image.style.scale = this.gameInstance.scale;
+    image.style.scale = this.size === "S" ? this.scale * 0.5 : this.scale; //this.gameInstance.scale;
     document.body.appendChild(image);
     return image;
   }
@@ -86,14 +87,13 @@ class Asteroid {
   }
 
   destroy() {
+    this.gameInstance.removeGameObject(this);
     if (this.size !== "S")
       this.gameInstance.generateAsteroidPair(
         this.size === "L" ? "M" : "S",
         this.position
       );
-    document.body.removeChild(this.sprite);
-    this.gameInstance.removeGameObject(this);
-    if (this.size !== "S") return;
+    this.sprite?.parentElement?.removeChild(this.sprite);
   }
 
   move() {

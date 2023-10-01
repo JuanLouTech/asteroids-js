@@ -36,7 +36,7 @@ class Bullet {
     image.style.left = this.x + "px";
     image.style.top = this.y + "px";
     image.style.zIndex = 90;
-    if (this.ownerIndex === 2) image.style.filter = "invert(100%)";
+    if (this.ownerIndex === 1) image.style.filter = "invert(100%)";
     image.style.scale = 1;
     document.body.appendChild(image);
     return image;
@@ -55,8 +55,8 @@ class Bullet {
   }
 
   destroy() {
+    this.sprite?.parentElement?.removeChild(this.sprite);
     this.gameInstance.removeGameObject(this);
-    document.body.removeChild(this.sprite);
   }
 
   checkCollisions() {
@@ -66,8 +66,19 @@ class Bullet {
           this.position.distanceTo(object.position) <
           this.collisionRadius + object.collisionRadius
         ) {
-          this.destroy();
+          new AudioPlayer(
+            this.gameInstance,
+            "./Assets/Sounds/explosion.wav",
+            0.8,
+            false
+          );
           object.destroy();
+          this.gameInstance.asteroidDestroyed(
+            object.points,
+            this.ownerIndex,
+            object.position
+          );
+          this.destroy();
         }
       }
     });

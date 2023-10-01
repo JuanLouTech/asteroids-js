@@ -53,7 +53,7 @@ class AnimatedSprite {
   }
 
   destroy() {
-    document.body.removeChild(this.sprite);
+    this.sprite?.parentElement?.removeChild(this.sprite);
   }
 
   move() {
