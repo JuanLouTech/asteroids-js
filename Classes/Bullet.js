@@ -1,6 +1,6 @@
 class Bullet {
-  SPEED = 8;
-  LIFE_SPAN = 1500;
+  SPEED = 800;
+  LIFE_SPAN = 1;
   ownerIndex = 0;
   position = new Vector2(0, 0);
   velocity = new Vector2(0, 0);
@@ -47,9 +47,12 @@ class Bullet {
     this.sprite.style.transform = "rotate(" + this.rotation + "rad)";
   }
 
-  move() {
-    this.position.add(this.velocity);
-    this.position = limitMovement(this.position);
+  move(deltaTime) {
+    this.position.add(this.velocity.clone().multiply(deltaTime));
+    this.position = getCorrectedPositions(
+      this.position,
+      this.collisionRadius
+    ).position;
     this.sprite.style.left = this.position.x - this.sprite.width / 2 + "px";
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
   }
@@ -89,7 +92,7 @@ class Bullet {
     if (this.lifeTime > this.LIFE_SPAN) {
       this.destroy();
     }
-    this.move();
+    this.move(deltaTime);
     this.checkCollisions();
     this.rotate();
   }

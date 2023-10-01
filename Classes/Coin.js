@@ -3,6 +3,9 @@ class Coin {
   type = "coin";
   points = 100;
   position = new Vector2(0, 0);
+  breathingEffectSpeed = 2;
+  lifetime = 0;
+
   constructor(gameInstance, x, y) {
     this.position.x = x;
     this.position.y = y;
@@ -15,10 +18,11 @@ class Coin {
     image.src = "./Assets/Images/Coin.png";
     this.sprite = image;
     image.style.position = "absolute";
-    image.style.left = this.position.x - this.sprite.width / 2 + "px";
-    image.style.top = this.position.y - this.sprite.height / 2 + "px";
+    image.style.left = this.position.x - this.collisionRadius / 2 + "px";
+    image.style.top = this.position.y - this.collisionRadius / 2 + "px";
     image.style.zIndex = 98;
-    image.style.scale = this.gameInstance.scale * 2;
+    this.scale = this.gameInstance.scale * 2;
+    image.style.scale = this.scale;
     document.body.appendChild(image);
     return image;
   }
@@ -28,5 +32,16 @@ class Coin {
     this.gameInstance.removeGameObject(this);
   }
 
-  update(deltaTime) {}
+  updateBreathEffect() {
+    this.sprite.style.scale =
+      (2 * this.scale) / 3 +
+      (Math.abs(Math.sin(this.lifetime * this.breathingEffectSpeed)) *
+        this.scale) /
+        3;
+  }
+
+  update(deltaTime) {
+    this.lifetime += deltaTime;
+    this.updateBreathEffect();
+  }
 }

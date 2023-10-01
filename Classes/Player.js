@@ -1,9 +1,9 @@
 class Player {
-  MAX_SPEED = 8;
+  MAX_SPEED = 700;
   ROTATION_SPEED = 0.02;
-  THRUST = 0.08;
-  CANNON_COOLDOWN = 600;
-  timeSinceLastShot = 300;
+  THRUST = 300;
+  CANNON_COOLDOWN = 0.6;
+  timeSinceLastShot = 0.8;
   type = "player";
   playerIndex;
   speed = 0;
@@ -15,8 +15,9 @@ class Player {
   thruster = null;
   inmunneTime = 0;
   inmunne = false;
-  inmunneDuration = 3000;
+  inmunneDuration = 3;
   contactPush = 0.5;
+  rotationSpeed = 120;
   duplicatePosition = new Vector2(0, 0);
 
   constructor(gameInstance, x, y, rotation, playerIndex = 1) {
@@ -108,13 +109,13 @@ class Player {
     this.duplicate.style.transform = "rotate(" + this.rotation + "rad)";
   }
 
-  move() {
+  move(deltaTime) {
     this.accVector.angle = this.rotation - Math.PI / 2;
     this.accVector.length = this.acceleration;
-    this.velVector.add(this.accVector);
+    this.velVector.add(this.accVector.clone().multiply(deltaTime));
     this.velVector.clampLength(this.MAX_SPEED);
-    this.position.add(this.velVector);
-    const positions = limitMovementWithDuplicate(
+    this.position.add(this.velVector.clone().multiply(deltaTime));
+    const positions = getCorrectedPositions(
       this.position,
       this.collisionRadius
     );
@@ -129,12 +130,12 @@ class Player {
       this.duplicatePosition.y - this.sprite.height / 2 + "px";
   }
 
-  getInputs() {
+  getInputs(deltaTime) {
     if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].left]) {
-      this.rotate(-2);
+      this.rotate(-this.rotationSpeed * deltaTime);
     }
     if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].right]) {
-      this.rotate(2);
+      this.rotate(this.rotationSpeed * deltaTime);
     }
     if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].up]) {
       this.acceleration = this.THRUST;
@@ -244,9 +245,9 @@ class Player {
     this.checkCollisions();
     this.timeSinceLastShot += deltaTime;
     this.acceleration = 0;
-    this.getInputs();
+    this.getInputs(deltaTime);
     this.speed += this.acceleration;
-    this.move();
+    this.move(deltaTime);
     this.thruster.update(deltaTime);
   }
 }

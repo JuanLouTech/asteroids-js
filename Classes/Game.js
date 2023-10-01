@@ -75,7 +75,7 @@ class Game {
   update = () => {
     if (Input.pressedKeys[CONTROLS.pause]) this.pause();
     const now = Date.now();
-    this.deltaTime = now - this.lastUpdate;
+    this.deltaTime = (now - this.lastUpdate) / 1000;
     if (!this.paused)
       this.gameObjects.forEach((object) => object.update(this.deltaTime));
     window.requestAnimationFrame(this.update);
@@ -168,7 +168,7 @@ class Game {
       65,
       0.001,
       "./Assets/Images/ParticleClear.png",
-      500
+      0.5
     );
 
     this.addGameObject(particles);

@@ -93,6 +93,10 @@ class Vector2 {
     return new Vector2(this.x / this.length, this.y / this.length);
   }
 
+  clone() {
+    return new Vector2(this.x, this.y);
+  }
+
   static ZERO() {
     return new Vector2(0, 0);
   }

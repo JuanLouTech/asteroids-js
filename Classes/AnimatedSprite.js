@@ -76,7 +76,7 @@ class AnimatedSprite {
       return;
     }
     this.timeSinceLastFrame += deltaTime;
-    if (this.timeSinceLastFrame >= 1000 / this.fps) {
+    if (this.timeSinceLastFrame >= 1 / this.fps) {
       this.timeSinceLastFrame = 0;
       this.currentFrame++;
       if (this.currentFrame >= this.frames.length) {

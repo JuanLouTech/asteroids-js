@@ -109,7 +109,7 @@ class Asteroid {
 
   move() {
     this.position.add(this.velocity);
-    const positions = limitMovementWithDuplicate(
+    const positions = getCorrectedPositions(
       this.position,
       this.collisionRadius
     );

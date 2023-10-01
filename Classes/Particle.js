@@ -54,7 +54,7 @@ class Particle {
     this.speed = this.speed <= 0 ? 0 : this.speed;
     this.direction = this.direction.normalize();
     this.position = this.position.add(
-      this.direction.multiply((this.speed * deltaTime) / 1000)
+      this.direction.multiply(this.speed * deltaTime)
     );
     this.sprite.style.left = this.position.x - this.sprite.width / 2 + "px";
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
