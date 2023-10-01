@@ -17,21 +17,40 @@ const limitMovement = (positionVector) => {
   return positionVector;
 };
 
-// FINISH THIS PART (THIS IS FOR MAKING THE OBJECTS APPEAR ON THE OTHER SIDE OF THE SCREEN WHILE EXITING THE SCREEN)
+// TODO: REFACTOR THIS, IT IS VERY UGLY
 const limitMovementWithDuplicate = (positionVector, objectRadius) => {
-  let duplicatePosition = new Vector2(positionVector.x, positionVector.y);
-  if (positionVector.x < -objectRadius) {
-    positionVector.x = window.innerWidth + objectRadius;
+  let duplicatePosition = limitDuplicateMovement(
+    new Vector2(positionVector.x, positionVector.y),
+    objectRadius
+  );
+  if (positionVector.x < 0) {
+    positionVector.x = window.innerWidth;
   }
-  if (positionVector.x > window.innerWidth + objectRadius) {
-    positionVector.x = -objectRadius;
+  if (positionVector.x > window.innerWidth) {
+    positionVector.x = 0;
   }
-  if (positionVector.y < -objectRadius) {
-    positionVector.y = window.innerHeight + objectRadius;
+  if (positionVector.y < 0) {
+    positionVector.y = window.innerHeight;
   }
-  if (positionVector.y > window.innerHeight + objectRadius) {
-    positionVector.y = -objectRadius;
+  if (positionVector.y > window.innerHeight) {
+    positionVector.y = 0;
   }
-
   return { position: positionVector, duplicatePosition: duplicatePosition };
+};
+
+const limitDuplicateMovement = (positionVector, objectRadius) => {
+  const newPosition = new Vector2(positionVector.x, positionVector.y);
+  if (positionVector.x < objectRadius) {
+    newPosition.x = window.innerWidth + positionVector.x;
+  }
+  if (positionVector.x > window.innerWidth - objectRadius) {
+    newPosition.x = positionVector.x - window.innerWidth;
+  }
+  if (positionVector.y < objectRadius) {
+    newPosition.y = window.innerHeight + positionVector.y;
+  }
+  if (positionVector.y > window.innerHeight - objectRadius) {
+    newPosition.y = positionVector.y - window.innerHeight;
+  }
+  return newPosition;
 };

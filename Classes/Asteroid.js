@@ -12,6 +12,7 @@ class Asteroid {
   type = "asteroid";
   gameInstance = null;
   scale = 1.5;
+  duplicatePosition = new Vector2(0, 0);
 
   // SIZE MUST BE "L", "M" or "S"
   constructor(gameInstance, x, y, size) {
@@ -25,6 +26,7 @@ class Asteroid {
     this.speed =
       Math.random() * (this.MAX_SPEED - this.MIN_SPEED) + this.MIN_SPEED;
     this.createImage();
+    this.createDuplicate();
     this.velocity = this.direction.multiply(this.speed);
     // this.assignCollisionRadius();
     this.assignPointsWithSize(size);
@@ -33,11 +35,11 @@ class Asteroid {
   assignPointsWithSize(size) {
     switch (size) {
       case "L":
-        this.collisionRadius = 30 * this.scale;
+        this.collisionRadius = 32 * this.scale;
         this.points = 20;
         break;
       case "M":
-        this.collisionRadius = 14 * this.scale;
+        this.collisionRadius = 16 * this.scale;
         this.points = 50;
         break;
       case "S":
@@ -63,11 +65,6 @@ class Asteroid {
     }
   }
 
-  //   assignCollisionRadius() {
-  //     const smallestSide = Math.max(this.sprite.width, this.sprite.height);
-  //     this.collisionRadius = smallestSide / 2;
-  //   }
-
   createImage() {
     const image = document.createElement("img");
     image.src = this.assignImageWithSize(this.size);
@@ -81,9 +78,22 @@ class Asteroid {
     return image;
   }
 
+  createDuplicate() {
+    const image = document.createElement("img");
+    image.src = this.assignImageWithSize(this.size);
+    image.style.position = "absolute";
+    image.style.left = this.x + "px";
+    image.style.top = this.y + "px";
+    image.style.zIndex = 94;
+    image.style.scale = this.size === "S" ? this.scale * 0.5 : this.scale; //this.gameInstance.scale;
+    document.body.appendChild(image);
+    this.duplicate = image;
+  }
+
   rotate() {
     this.rotation += this.rotationSpeed;
     this.sprite.style.transform = "rotate(" + this.rotation + "rad)";
+    this.duplicate.style.transform = "rotate(" + this.rotation + "rad)";
   }
 
   destroy() {
@@ -94,13 +104,25 @@ class Asteroid {
         this.position
       );
     this.sprite?.parentElement?.removeChild(this.sprite);
+    this.duplicate?.parentElement?.removeChild(this.duplicate);
   }
 
   move() {
     this.position.add(this.velocity);
-    this.position = limitMovement(this.position);
+    const positions = limitMovementWithDuplicate(
+      this.position,
+      this.collisionRadius
+    );
+    // MOVE SPRITE
     this.sprite.style.left = this.position.x - this.sprite.width / 2 + "px";
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
+    // MOVE DUPLICATE
+    this.position = positions.position;
+    this.duplicatePosition = positions.duplicatePosition;
+    this.duplicate.style.left =
+      this.duplicatePosition.x - this.sprite.width / 2 + "px";
+    this.duplicate.style.top =
+      this.duplicatePosition.y - this.sprite.height / 2 + "px";
   }
 
   update(deltaTime) {

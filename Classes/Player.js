@@ -17,6 +17,7 @@ class Player {
   inmunne = false;
   inmunneDuration = 3000;
   contactPush = 0.5;
+  duplicatePosition = new Vector2(0, 0);
 
   constructor(gameInstance, x, y, rotation, playerIndex = 1) {
     this.playerIndex = playerIndex;
@@ -24,6 +25,7 @@ class Player {
     this.position.y = y;
     this.rotation = rotation;
     this.createPlayerImage();
+    this.createDuplicate();
     this.gameInstance = gameInstance;
     this.inmunne = true;
     this.engineSound = new AudioPlayer(
@@ -65,6 +67,25 @@ class Player {
     return image;
   }
 
+  createDuplicate() {
+    const image = document.createElement("img");
+    image.src =
+      this.playerIndex === 0
+        ? "./Assets/Images/ship-p1.png"
+        : "./Assets/Images/ship-p2.png";
+    this.duplicate = image;
+    image.style.position = "absolute";
+    image.style.left = this.x + "px";
+    image.style.top = this.y + "px";
+    image.style.zIndex = 99;
+    image.style.scale = 1;
+    image.style.filter = "none";
+    image.style.opacity = 0.7;
+    image.style.outline = "none";
+    image.style.borderRadius = "50%";
+    document.body.appendChild(image);
+  }
+
   getCannonPosition() {
     const cannonPos = new Vector2(this.position.x, this.position.y).add(
       new Vector2(0, -this.sprite.height / 2).rotate(this.rotation)
@@ -84,6 +105,7 @@ class Player {
   rotate(value) {
     this.rotation += value * this.ROTATION_SPEED;
     this.sprite.style.transform = "rotate(" + this.rotation + "rad)";
+    this.duplicate.style.transform = "rotate(" + this.rotation + "rad)";
   }
 
   move() {
@@ -92,9 +114,19 @@ class Player {
     this.velVector.add(this.accVector);
     this.velVector.clampLength(this.MAX_SPEED);
     this.position.add(this.velVector);
-    this.position = limitMovement(this.position);
+    const positions = limitMovementWithDuplicate(
+      this.position,
+      this.collisionRadius
+    );
+    this.position = positions.position;
     this.sprite.style.left = this.position.x - this.sprite.width / 2 + "px";
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
+    // MOVE DUPLICATE
+    this.duplicatePosition = positions.duplicatePosition;
+    this.duplicate.style.left =
+      this.duplicatePosition.x - this.sprite.width / 2 + "px";
+    this.duplicate.style.top =
+      this.duplicatePosition.y - this.sprite.height / 2 + "px";
   }
 
   getInputs() {
@@ -141,6 +173,9 @@ class Player {
     this.sprite.style.filter = "blur(2px)";
     this.sprite.style.opacity = 0.7;
     this.sprite.style.outline = "2px solid white";
+    this.duplicate.style.filter = "blur(2px)";
+    this.duplicate.style.opacity = 0.7;
+    this.duplicate.style.outline = "2px solid white";
   }
 
   destroy() {
@@ -148,6 +183,7 @@ class Player {
     this.engineSound.destroy();
     this.sprite?.parentElement?.removeChild(this.sprite);
     this.gameInstance.removeGameObject(this);
+    this.duplicate?.parentElement?.removeChild(this.duplicate);
   }
 
   checkCollisions() {
@@ -195,6 +231,9 @@ class Player {
     this.sprite.style.filter = "none";
     this.sprite.style.opacity = 1;
     this.sprite.style.outline = "none";
+    this.duplicate.style.filter = "none";
+    this.duplicate.style.opacity = 1;
+    this.duplicate.style.outline = "none";
   }
 
   update(deltaTime) {
