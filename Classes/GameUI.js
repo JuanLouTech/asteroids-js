@@ -139,13 +139,13 @@ class GameUI {
       this.livesPlayer1 = lives;
       this.livesTextP1.innerHTML = "";
       for (let i = 0; i < lives; i++) {
-        this.livesTextP1.innerHTML += "A";
+        this.livesTextP1.innerHTML += "❤️";
       }
     } else {
       this.livesPlayer2 = lives;
       this.livesTextP2.innerHTML = "";
       for (let i = 0; i < lives; i++) {
-        this.livesTextP2.innerHTML += "A";
+        this.livesTextP2.innerHTML += "❤️";
       }
     }
   }

@@ -5,19 +5,20 @@ class GameOverScreen {
   constructor(gameInstance, scores, playerCount) {
     this.playerCount = playerCount;
     this.gameInstance = gameInstance;
-    const isHighScore = this.checkHiScore();
+    const isHighScore = this.getIsHighScore(scores);
     this.createGameOverTextDiv();
     this.createResultsTextDiv(scores, isHighScore);
     this.createWinnerTextDiv(scores);
     this.createButtons();
   }
 
-  checkHiScore() {
-    // const hiScore = localStorage.getItem("hiScore") || 0;
-    // if (this.scores[0] > hiScore) {
-    //   localStorage.setItem("hiScore", this.scores[0]);
-    //   return true;
-    // }
+  getIsHighScore(scores) {
+    const mode = this.gameInstance.coinHunting ? "-Hunting" : "-Classic";
+    const hiScore = localStorage.getItem(`hiScore${mode}`) || 0;
+    if (scores[0] > hiScore) {
+      localStorage.setItem(`hiScore${mode}`, scores[0]);
+      return true;
+    }
     return false;
   }
 
@@ -114,7 +115,7 @@ class GameOverScreen {
     this.resultsText.style.top = "50vh";
     this.resultsText.style.width = "100%";
     this.resultsText.style.zIndex = 201;
-    this.resultsText.style.color = "white";
+    this.resultsText.style.color = isHighScore ? "yellowGreen" : "white";
     this.resultsText.style.fontSize = "50px";
     this.resultsText.style.fontFamily = "monospace";
     this.resultsText.style.fontWeight = "bold";
@@ -133,7 +134,12 @@ class GameOverScreen {
     this.winnerText.style.top = "60vh";
     this.winnerText.style.width = "100%";
     this.winnerText.style.zIndex = 201;
-    this.winnerText.style.color = "white";
+    this.winnerText.style.color =
+      scores[0] === scores[1]
+        ? "yellow"
+        : scores[0] > scores[1]
+        ? "yellowGreen"
+        : "red";
     this.winnerText.style.fontSize = "50px";
     this.winnerText.style.fontFamily = "monospace";
     this.winnerText.style.fontWeight = "bold";

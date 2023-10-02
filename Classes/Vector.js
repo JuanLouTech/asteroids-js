@@ -104,4 +104,15 @@ class Vector2 {
   static RandomDirection() {
     return new Vector2(2 * Math.random() - 1, 2 * Math.random() - 1);
   }
+
+  static RandomPosition() {
+    return new Vector2(
+      Math.random() * window.innerWidth,
+      Math.random() * window.innerHeight
+    );
+  }
+
+  static dotProduct(vector1, vector2) {
+    return vector1.x * vector2.x + vector1.y * vector2.y;
+  }
 }

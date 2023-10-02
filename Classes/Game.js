@@ -16,7 +16,7 @@ class Game {
   constructor() {
     Input.initializeKeyboardInputs();
     this.update();
-    this.menuScreen = new MenuScreen(this);
+    this.mainMenu();
   }
 
   /*
@@ -29,6 +29,10 @@ class Game {
     this.coinHunting = false;
     this.removeAllObjects();
     this.removeAllScreens();
+    this.generateAsteroidPair("L", Vector2.RandomPosition());
+    this.generateAsteroidPair("L", Vector2.RandomPosition());
+    this.generateAsteroidPair("M", Vector2.RandomPosition());
+    this.generateAsteroidPair("S", Vector2.RandomPosition());
     this.menuScreen = new MenuScreen(this);
   };
 
@@ -101,7 +105,7 @@ class Game {
       this.playerCount === 2 ? window.innerWidth / 4 : window.innerWidth / 2;
     setTimeout(() => {
       const player1 = new Player(this, xPosition, window.innerHeight / 2, 0, 0);
-      player1.makeInmunne();
+      player1.activateInmunne();
       this.gameObjects.push(player1);
     }, 2000);
   };
@@ -116,7 +120,7 @@ class Game {
         0,
         1
       );
-      player2.makeInmunne();
+      player2.activateInmunne();
       this.gameObjects.push(player2);
     }, 2000);
   };
@@ -146,7 +150,7 @@ class Game {
       this.gameObjects.push(asteroid);
     }
     this.gameObjects.forEach((object) => {
-      if (object.type === "player") object.makeInmunne();
+      if (object.type === "player") object.activateInmunne();
     });
   };
 
@@ -256,7 +260,9 @@ class Game {
   }
 
   removeAllObjects() {
-    this.gameObjects.forEach((object) => object.destroy());
+    this.gameObjects.forEach((object) => {
+      object.type === "asteroid" ? object.destroy(false) : object.destroy();
+    });
     this.gameObjects = [];
   }
 
