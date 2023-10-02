@@ -124,31 +124,51 @@ class Player {
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
     // MOVE DUPLICATE
     this.duplicatePosition = positions.duplicatePosition;
-    this.duplicate.style.left =
-      this.duplicatePosition.x - this.sprite.width / 2 + "px";
-    this.duplicate.style.top =
-      this.duplicatePosition.y - this.sprite.height / 2 + "px";
+    if (
+      positions.position.x !== positions.duplicatePosition.x &&
+      positions.position.y !== positions.duplicatePosition.y
+    ) {
+      this.duplicate.style.opacity = 1;
+      this.duplicate.style.left =
+        this.duplicatePosition.x - this.sprite.width / 2 + "px";
+      this.duplicate.style.top =
+        this.duplicatePosition.y - this.sprite.height / 2 + "px";
+      return;
+    }
+    this.duplicate.style.opacity = 0;
   }
 
   getInputs(deltaTime) {
-    if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].left]) {
+    if (
+      Input.pressedKeys[KEY_CONTROLS[`${this.playerIndex}`].left] ||
+      Input.pressedButtons[this.playerIndex].left
+    ) {
       this.rotate(-this.rotationSpeed * deltaTime);
     }
-    if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].right]) {
+    if (
+      Input.pressedKeys[KEY_CONTROLS[`${this.playerIndex}`].right] ||
+      Input.pressedButtons[this.playerIndex].right
+    ) {
       this.rotate(this.rotationSpeed * deltaTime);
     }
-    if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].up]) {
+    if (
+      Input.pressedKeys[KEY_CONTROLS[`${this.playerIndex}`].thrust] ||
+      Input.pressedButtons[this.playerIndex].thrust
+    ) {
       this.acceleration = this.THRUST;
+      this.thruster.visible = true;
       this.engineSound.setVolume(0.1);
     } else {
       this.acceleration = 0;
+      this.thruster.visible = false;
       this.engineSound.setVolume(0.0);
     }
-    if (Input.pressedKeys[CONTROLS[`${this.playerIndex}`].fire]) {
+    if (
+      Input.pressedKeys[KEY_CONTROLS[`${this.playerIndex}`].fire] ||
+      Input.pressedButtons[this.playerIndex].fire
+    ) {
       this.fire();
     }
-    this.thruster.visible =
-      Input.pressedKeys[CONTROLS[`${this.playerIndex}`].up];
   }
 
   fire() {

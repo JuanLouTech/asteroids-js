@@ -44,6 +44,6 @@ class AudioPlayer {
   destroy() {
     if (!this.audio) return;
     this.stop();
-    this.audio.parentElement.removeChild(this.audio);
+    this.audio?.parentElement?.removeChild(this.audio);
   }
 }

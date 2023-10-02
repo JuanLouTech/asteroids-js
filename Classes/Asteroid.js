@@ -1,6 +1,6 @@
 class Asteroid {
-  MAX_SPEED = 3;
-  MIN_SPEED = 0.8;
+  MAX_SPEED = 200;
+  MIN_SPEED = 80;
   rotationSpeed = 0.02;
   speed = 0;
   rotation = 0;
@@ -96,9 +96,9 @@ class Asteroid {
     this.duplicate.style.transform = "rotate(" + this.rotation + "rad)";
   }
 
-  destroy() {
+  destroy(splitAfterDestroy = true) {
     this.gameInstance.removeGameObject(this);
-    if (this.size !== "S")
+    if (this.size !== "S" && splitAfterDestroy)
       this.gameInstance.generateAsteroidPair(
         this.size === "L" ? "M" : "S",
         this.position
@@ -107,26 +107,34 @@ class Asteroid {
     this.duplicate?.parentElement?.removeChild(this.duplicate);
   }
 
-  move() {
-    this.position.add(this.velocity);
+  move(deltaTime) {
+    this.position.add(this.velocity.clone().multiply(deltaTime));
     const positions = getCorrectedPositions(
       this.position,
       this.collisionRadius
     );
+    this.position = positions.position;
     // MOVE SPRITE
     this.sprite.style.left = this.position.x - this.sprite.width / 2 + "px";
     this.sprite.style.top = this.position.y - this.sprite.height / 2 + "px";
     // MOVE DUPLICATE
-    this.position = positions.position;
     this.duplicatePosition = positions.duplicatePosition;
-    this.duplicate.style.left =
-      this.duplicatePosition.x - this.sprite.width / 2 + "px";
-    this.duplicate.style.top =
-      this.duplicatePosition.y - this.sprite.height / 2 + "px";
+    if (
+      positions.position.x !== positions.duplicatePosition.x &&
+      positions.position.y !== positions.duplicatePosition.y
+    ) {
+      this.duplicate.style.opacity = 1;
+      this.duplicate.style.left =
+        this.duplicatePosition.x - this.sprite.width / 2 + "px";
+      this.duplicate.style.top =
+        this.duplicatePosition.y - this.sprite.height / 2 + "px";
+      return;
+    }
+    this.duplicate.style.opacity = 0;
   }
 
   update(deltaTime) {
-    this.move();
+    this.move(deltaTime);
     this.rotate();
   }
 }

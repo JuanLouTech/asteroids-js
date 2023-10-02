@@ -73,7 +73,13 @@ class Game {
   }
 
   update = () => {
-    if (Input.pressedKeys[CONTROLS.pause]) this.pause();
+    Input.update();
+    if (
+      Input.pressedKeys[KEY_CONTROLS.pause] ||
+      Input.pressedButtons[0].pause ||
+      Input.pressedButtons[1].pause
+    )
+      this.pause();
     const now = Date.now();
     this.deltaTime = (now - this.lastUpdate) / 1000;
     if (!this.paused)
@@ -123,9 +129,9 @@ class Game {
     }
   };
 
-  generateInitialAsteroids = (size, num) => {
+  generateInitialAsteroids = (size, num, splitAfterDestroy = true) => {
     this.gameObjects.forEach((object) => {
-      if (object.type === "asteroid") object.destroy();
+      if (object.type === "asteroid") object.destroy(splitAfterDestroy);
     });
     new AudioPlayer(this, "./Assets/Sounds/levelUp.wav", 0.5, false);
     this.level += 1;
@@ -192,7 +198,7 @@ class Game {
     this.UI.setScore(playerIndex, this.scores[playerIndex]);
     if (!this.gameObjects.find((object) => object.type === "coin")) {
       this.spawnCoins();
-      this.generateInitialAsteroids("L", this.level * 2);
+      this.generateInitialAsteroids("M", this.level * 3, false);
     }
   };
 
