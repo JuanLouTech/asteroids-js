@@ -48,7 +48,7 @@ class Game {
     this.UI = new GameUI(this, playerCount);
     this.createPlayer1();
     if (playerCount === 2) this.createPlayer2();
-    this.generateInitialAsteroids("L", 1);
+    this.generateInitialAsteroids("L", 2);
     if (this.coinHunting) this.spawnCoins();
   };
 
@@ -198,7 +198,8 @@ class Game {
     this.UI.setScore(playerIndex, this.scores[playerIndex]);
     if (!this.gameObjects.find((object) => object.type === "coin")) {
       this.spawnCoins();
-      this.generateInitialAsteroids("M", this.level * 3, false);
+      const size = this.level < 3 ? "L" : "M";
+      this.generateInitialAsteroids(size, this.level * 3, false);
     }
   };
 
