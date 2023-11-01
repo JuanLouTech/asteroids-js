@@ -120,7 +120,7 @@ class Asteroid {
     // MOVE DUPLICATE
     this.duplicatePosition = positions.duplicatePosition;
     if (
-      positions.position.x !== positions.duplicatePosition.x &&
+      positions.position.x !== positions.duplicatePosition.x ||
       positions.position.y !== positions.duplicatePosition.y
     ) {
       this.duplicate.style.opacity = 1;
