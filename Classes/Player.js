@@ -19,15 +19,20 @@ class Player {
   contactPush = 50;
   rotationSpeed = 120;
   duplicatePosition = new Vector2(0, 0);
+  scale = 1;
 
   constructor(gameInstance, x, y, rotation, playerIndex = 1) {
     this.playerIndex = playerIndex;
+    this.MAX_THRUST *= gameInstance.scale;
+    this.MAX_SPEED *= gameInstance.scale;
+    this.collisionRadius *= gameInstance.scale;
+    this.scale *= gameInstance.scale;
     this.position.x = x;
     this.position.y = y;
     this.rotation = rotation;
+    this.gameInstance = gameInstance;
     this.createPlayerImage();
     this.createDuplicate();
-    this.gameInstance = gameInstance;
     this.inmunne = true;
     this.engineSound = new AudioPlayer(
       this.gameInstance,
@@ -54,15 +59,22 @@ class Player {
     image.style.left = this.x + "px";
     image.style.top = this.y + "px";
     image.style.zIndex = 100;
-    image.style.scale = 1;
+    image.style.scale = this.scale;
     image.style.filter = "none";
     image.style.opacity = 0.7;
     image.style.outline = "none";
     image.style.borderRadius = "50%";
     document.body.appendChild(image);
 
-    this.thruster = new Thruster(0, 13, this.rotation, 20, true, this);
-    this.thruster.rescale(2);
+    this.thruster = new Thruster(
+      0 * this.scale,
+      13 * this.scale,
+      this.rotation,
+      20,
+      true,
+      this
+    );
+    this.thruster.rescale(2 * this.scale);
     this.thruster.play();
     return image;
   }
@@ -78,7 +90,7 @@ class Player {
     image.style.left = this.x + "px";
     image.style.top = this.y + "px";
     image.style.zIndex = 99;
-    image.style.scale = 1;
+    image.style.scale = this.scale;
     image.style.filter = "none";
     image.style.opacity = 0.7;
     image.style.outline = "none";

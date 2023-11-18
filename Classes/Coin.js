@@ -5,11 +5,14 @@ class Coin {
   position = new Vector2(0, 0);
   breathingEffectSpeed = 2;
   lifetime = 0;
+  scale = 1;
 
   constructor(gameInstance, x, y) {
     this.position.x = x;
     this.position.y = y;
     this.gameInstance = gameInstance;
+    this.scale *= gameInstance.scale;
+    this.collisionRadius *= gameInstance.scale;
     this.createImage();
   }
 

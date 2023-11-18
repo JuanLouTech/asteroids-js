@@ -2,8 +2,11 @@ class GameOverScreen {
   focussedButtonIndex = 0;
   buttons = [];
   buttonBackground = "rgba(1, 0, 1, 0.0)";
+  scale = 1;
+
   constructor(gameInstance, scores, playerCount) {
     this.playerCount = playerCount;
+    this.scale *= gameInstance.scale;
     this.gameInstance = gameInstance;
     const isHighScore = this.getIsHighScore(scores);
     this.createGameOverTextDiv();
@@ -33,7 +36,7 @@ class GameOverScreen {
     this.gameOverText.style.height = "100%";
     this.gameOverText.style.zIndex = 200;
     this.gameOverText.style.color = "white";
-    this.gameOverText.style.fontSize = "50px";
+    this.gameOverText.style.fontSize = `${50 * this.scale}px`;
     this.gameOverText.style.fontFamily = "monospace";
     this.gameOverText.style.fontWeight = "bold";
     this.gameOverText.style.textAlign = "center";
@@ -49,16 +52,16 @@ class GameOverScreen {
     menuButton.style.left = "35%";
     menuButton.style.top = "70%";
     menuButton.style.width = "10%";
-    menuButton.style.height = "50px";
+    menuButton.style.height = `${50 * this.scale}px`;
     menuButton.style.zIndex = 201;
     menuButton.style.color = "white";
-    menuButton.style.fontSize = "30px";
+    menuButton.style.fontSize = `${30 * this.scale}px`;
     menuButton.style.fontFamily = "monospace";
     menuButton.style.fontWeight = "bold";
     menuButton.style.textAlign = "center";
-    menuButton.style.borderRadius = "10px";
+    menuButton.style.borderRadius = `${10 * this.scale}px`;
     menuButton.style.backgroundColor = this.buttonBackground;
-    menuButton.style.border = "2px solid white";
+    menuButton.style.border = `${2 * this.scale}px solid white`;
     menuButton.style.cursor = "pointer";
     menuButton.addEventListener("mousedown", (e) => {
       this.gameInstance.mainMenu();
@@ -78,16 +81,16 @@ class GameOverScreen {
     replayButton.style.left = "55%";
     replayButton.style.top = "70%";
     replayButton.style.width = "10%";
-    replayButton.style.height = "50px";
+    replayButton.style.height = `${50 * this.scale}px`;
     replayButton.style.zIndex = 201;
     replayButton.style.color = "white";
-    replayButton.style.fontSize = "30px";
+    replayButton.style.fontSize = `${30 * this.scale}px`;
     replayButton.style.fontFamily = "monospace";
     replayButton.style.fontWeight = "bold";
     replayButton.style.textAlign = "center";
-    replayButton.style.borderRadius = "10px";
+    replayButton.style.borderRadius = `${10 * this.scale}px`;
     replayButton.style.backgroundColor = this.buttonBackground;
-    replayButton.style.border = "2px solid white";
+    replayButton.style.border = `${2 * this.scale}px solid white`;
     replayButton.style.cursor = "pointer";
     replayButton.addEventListener("mousedown", (e) => {
       this.gameInstance.startGame(this.playerCount);
@@ -116,7 +119,7 @@ class GameOverScreen {
     this.resultsText.style.width = "100%";
     this.resultsText.style.zIndex = 201;
     this.resultsText.style.color = isHighScore ? "yellowGreen" : "white";
-    this.resultsText.style.fontSize = "50px";
+    this.resultsText.style.fontSize = `${50 * this.scale}px`;
     this.resultsText.style.fontFamily = "monospace";
     this.resultsText.style.fontWeight = "bold";
     this.resultsText.style.textAlign = "center";
@@ -140,7 +143,7 @@ class GameOverScreen {
         : scores[0] > scores[1]
         ? "yellowGreen"
         : "red";
-    this.winnerText.style.fontSize = "50px";
+    this.winnerText.style.fontSize = `${50 * this.scale}px`;
     this.winnerText.style.fontFamily = "monospace";
     this.winnerText.style.fontWeight = "bold";
     this.winnerText.style.textAlign = "center";

@@ -2,8 +2,10 @@ class PauseScreen {
   focussedButtonIndex = 0;
   buttons = [];
   buttonBackground = "rgba(1, 0, 1, 0.0)";
+  scale = 1;
   constructor(gameInstance) {
     this.gameInstance = gameInstance;
+    this.scale *= gameInstance.scale;
     this.createTitleDiv();
     this.createButtons();
     new AudioPlayer(
@@ -25,7 +27,7 @@ class PauseScreen {
     this.titleDiv.style.height = "100%";
     this.titleDiv.style.zIndex = 200;
     this.titleDiv.style.color = "white";
-    this.titleDiv.style.fontSize = "100px";
+    this.titleDiv.style.fontSize = `${100 * this.scale}px`;
     this.titleDiv.style.fontFamily = "monospace";
     this.titleDiv.style.fontWeight = "bold";
     this.titleDiv.style.textAlign = "center";
@@ -41,16 +43,16 @@ class PauseScreen {
     menuButton.style.left = "35%";
     menuButton.style.top = "70%";
     menuButton.style.width = "10%";
-    menuButton.style.height = "50px";
+    menuButton.style.height = `${50 * this.scale}px`;
     menuButton.style.zIndex = 201;
     menuButton.style.color = "white";
-    menuButton.style.fontSize = "30px";
+    menuButton.style.fontSize = `${30 * this.scale}px`;
     menuButton.style.fontFamily = "monospace";
     menuButton.style.fontWeight = "bold";
     menuButton.style.textAlign = "center";
-    menuButton.style.borderRadius = "10px";
+    menuButton.style.borderRadius = `${10 * this.scale}px`;
     menuButton.style.backgroundColor = this.buttonBackground;
-    menuButton.style.border = "2px solid white";
+    menuButton.style.border = `${2 * this.scale}px solid white`;
     menuButton.style.cursor = "pointer";
     menuButton.addEventListener("mousedown", (e) => {
       this.gameInstance.mainMenu();
@@ -70,16 +72,16 @@ class PauseScreen {
     resumeButton.style.left = "55%";
     resumeButton.style.top = "70%";
     resumeButton.style.width = "10%";
-    resumeButton.style.height = "50px";
+    resumeButton.style.height = `${50 * this.scale}px`;
     resumeButton.style.zIndex = 201;
     resumeButton.style.color = "white";
-    resumeButton.style.fontSize = "30px";
+    resumeButton.style.fontSize = `${30 * this.scale}px`;
     resumeButton.style.fontFamily = "monospace";
     resumeButton.style.fontWeight = "bold";
     resumeButton.style.textAlign = "center";
-    resumeButton.style.borderRadius = "10px";
+    resumeButton.style.borderRadius = `${10 * this.scale}px`;
     resumeButton.style.backgroundColor = this.buttonBackground;
-    resumeButton.style.border = "2px solid white";
+    resumeButton.style.border = `${2 * this.scale}px solid white`;
     resumeButton.style.cursor = "pointer";
     resumeButton.addEventListener("mousedown", (e) => {
       this.gameInstance.resume();

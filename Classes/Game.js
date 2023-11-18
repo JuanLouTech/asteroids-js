@@ -14,10 +14,18 @@ class Game {
   coinHunting = false;
 
   constructor() {
+    this.scaleGame();
     Input.initializeKeyboardInputs();
     this.update();
     this.mainMenu();
   }
+
+  scaleGame = () => {
+    const widthScale = window.innerWidth / 1920;
+    const heightScale = window.innerHeight / 1080;
+    this.scale = Math.min(widthScale, heightScale);
+    console.log("!1. game scale: ", this.scale);
+  };
 
   /*
   ----------------------------------------------------------------------------------------------------

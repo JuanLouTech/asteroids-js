@@ -9,13 +9,17 @@ class Bullet {
   gameInstance = null;
   lifeTime = 0;
   initialSpeed = Vector2.ZERO();
+  scale = 1;
 
   // Direction is a Vector2
   constructor(gameInstance, x, y, angle, playerIndex, initialSpeed) {
     this.ownerIndex = playerIndex;
     this.position.x = x;
     this.position.y = y;
+    this.scale = 1 * gameInstance.scale;
+    this.collisionRadius *= gameInstance.scale;
     this.createImage();
+    this.SPEED *= gameInstance.scale;
     this.velocity = new Vector2(0, -1).rotate(angle).multiply(this.SPEED);
     this.gameInstance = gameInstance;
     this.velocity.add(initialSpeed || Vector2.ZERO());
@@ -37,7 +41,7 @@ class Bullet {
     image.style.top = this.y + "px";
     image.style.zIndex = 90;
     if (this.ownerIndex === 1) image.style.filter = "invert(100%)";
-    image.style.scale = 1;
+    image.style.scale = this.scale;
     document.body.appendChild(image);
     return image;
   }

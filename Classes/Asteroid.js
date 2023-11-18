@@ -23,8 +23,10 @@ class Asteroid {
     this.position.y = y;
     this.rotation = Math.random() * 2 * Math.PI - Math.PI;
     this.rotationSpeed = Math.random() * 0.05 - 0.025;
+    this.scale *= gameInstance.scale;
     this.speed =
-      Math.random() * (this.MAX_SPEED - this.MIN_SPEED) + this.MIN_SPEED;
+      (Math.random() * (this.MAX_SPEED - this.MIN_SPEED) + this.MIN_SPEED) *
+      gameInstance.scale;
     this.createImage();
     this.createDuplicate();
     this.velocity = this.direction.multiply(this.speed);

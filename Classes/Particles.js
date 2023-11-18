@@ -18,7 +18,7 @@ class Particles {
     this.gameInstance = gameInstance;
     this.x = x;
     this.y = y;
-    this.scale = scale;
+    this.scale = scale * gameInstance.scale;
     this.amount = amount;
     this.explsoive = explosive;
     this.direction = direction;

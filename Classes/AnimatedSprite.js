@@ -7,8 +7,9 @@ class AnimatedSprite {
   rotation = 0;
   offset = new Vector2(0, 0);
   visible = true;
-
+  scale = 1;
   isPlaying = false;
+
   constructor(offsetX, offsetY, rotation, fps, loop, frames, parent) {
     this.parent = parent
       ? parent
@@ -27,6 +28,8 @@ class AnimatedSprite {
     this.sprite.style.top = `${this.parent.position.y + this.offset.y}px`;
     this.sprite.style.transform = `rotate(${this.rotation}deg)`;
     this.sprite.style.alpha = 0;
+    // TODO: CAREFUL WITH THIS
+    this.scale = parent ? parent.scale : 1;
     document.body.appendChild(this.sprite);
   }
 
